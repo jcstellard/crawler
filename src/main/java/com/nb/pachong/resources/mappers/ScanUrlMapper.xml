@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nb.pachong.dao.ScanUrlDao">
+    <select id="getScanUrls" resultType="java.lang.String">
+        select url
+        from scan_url
+        where delete_type = 0
+        order by create_time desc
+    </select>
+
+    <insert id="addUrl">
+        insert into scan_url(url, create_time, update_time, delete_type)
+        values (#{url}, #{createTime}, #{createTime}, 0)
+    </insert>
+
+    <update id="deleteUrl">
+        update scan_url
+        set delete_type=1,
+            update_time=#{updateTime}
+        where url = #{url}
+    </update>
+
+    <update id="update">
+        update scan_url
+        set update_time=#{updateTime}
+        where url = #{url}
+    </update>
+</mapper>
