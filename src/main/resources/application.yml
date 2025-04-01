@@ -1,0 +1,23 @@
+server:
+  port: 996
+
+spring:
+  application:
+    name: pachong
+  datasource:
+    url: jdbc:mysql://localhost:3306/web3?serverTimezone=GMT%2B8
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+mybatis:
+  #mapper locations
+  mapper-locations:
+    classpath:mappers/*Mapper.xml
+  #aliases
+  type-aliases-package:
+    com.nb.pachong.entity
+
+pagehelper:
+  reasonable:
+    true
