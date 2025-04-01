@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nb.pachong.dao.CaDao">
+    <insert id="addUrl">
+        insert into ca(ca, create_time, update_time, delete_type)
+        values (#{ca}, #{createTime}, #{createTime}, 0)
+    </insert>
+
+    <select id="getCa" resultType="com.nb.pachong.entity.CaEntity">
+        select *
+        from ca
+        where
+        delete_type = 0
+        <if test="send == 0">
+            and is_send = #{send}
+        </if>
+        <if test="pump">
+            and ca like "%pump%"
+        </if>
+        and is_confirm = 0
+        order by create_time desc
+    </select>
+
+    <select id="getCaByPage" resultType="com.nb.pachong.entity.CaEntity">
+        select *
+        from ca
+        where
+        delete_type = 0
+        <if test="send == 0">
+            and is_send = #{send}
+        </if>
+        <if test="pump">
+            and ca like "%pump%"
+        </if>
+        and is_confirm = 0
+        order by create_time desc
+        limit #{num}, #{pageSize}
+    </select>
+
+    <update id="updateTime">
+        update ca
+        set update_time = #{updateTime}
+        where ca = #{ca}
+    </update>
+
+    <update id="confirm">
+        update ca
+        set update_time = #{updateTime},
+            is_confirm  = 1
+        where ca = #{ca}
+    </update>
+
+    <select id="findCount" resultType="java.lang.Integer">
+        select count(1)
+        from ca
+        where ca = #{ca}
+          and delete_type = 0
+    </select>
+
+    <select id="getCaUrls" resultType="java.lang.String">
+        select url
+        from ca_url
+        where ca = #{ca}
+          and delete_type = 0
+    </select>
+
+    <insert id="addCaUrl">
+        insert into ca_url(ca, url, create_time, update_time, delete_type)
+        values (#{ca}, #{url}, #{createTime}, #{createTime}, 0)
+    </insert>
+
+    <update id="updateCaUrlTime">
+        update ca_url
+        set update_time = #{updateTime}
+        where ca = #{ca}
+          and url = #{url}
+    </update>
+
+    <update id="send">
+        update ca
+        set update_time = #{updateTime},
+        is_send=1
+        where delete_type = 0
+        and (ca in
+        <foreach collection="cas" item="ca" open="(" close=")" separator="," index="index">
+            <if test="(index % 999) == 998">
+                NULL) OR ca IN(
+            </if>#{ca}
+        </foreach>
+        )
+    </update>
+</mapper>
